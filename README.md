@@ -4,7 +4,7 @@ Aplikasi movie discovery yang dibangun dengan React, dilengkapi fitur user authe
 
 ---
 
-## 📦 Libraries yang Digunakan
+## Libraries yang Digunakan
 
 | Library | Kegunaan |
 |---|---|
@@ -17,7 +17,7 @@ Aplikasi movie discovery yang dibangun dengan React, dilengkapi fitur user authe
 
 ---
 
-## ✅ Fitur Utama (Requirement)
+## Fitur Utama (Requirement)
 
 ### Milestone 1 — API Integration
 
@@ -40,7 +40,7 @@ Aplikasi movie discovery yang dibangun dengan React, dilengkapi fitur user authe
 
 ---
 
-## ✨ Fitur Tambahan (di luar requirement utama)
+## Fitur Tambahan (di luar requirement utama)
 
 1. **Persistent Session** — Token & data user disimpan di `localStorage`, session tetap aktif setelah refresh halaman
 2. **Context API** — `AuthContext` untuk global state management tanpa library tambahan
@@ -52,31 +52,8 @@ Aplikasi movie discovery yang dibangun dengan React, dilengkapi fitur user authe
 
 ---
 
-## 🗂️ Struktur Project
 
-```
-src/
-├── context/
-│   └── AuthContext.jsx       # Global auth state (Context API)
-├── components/
-│   ├── Hero.jsx              # Hero banner section
-│   ├── MovieCard.jsx         # Individual movie card
-│   ├── MovieList.jsx         # Horizontal scrollable movie list
-│   ├── ProtectedRoute.jsx    # Route guard component
-│   └── Sidebar.jsx           # Navigation sidebar
-├── pages/
-│   ├── HomePage.jsx          # Browse movies (protected)
-│   ├── LoginPage.jsx         # Login form
-│   ├── RegisterPage.jsx      # Register form
-│   ├── UsersPage.jsx         # User list + pagination (protected)
-│   └── UserDetailPage.jsx    # Single user detail (protected)
-├── App.jsx                   # Router & provider setup
-└── main.jsx                  # Entry point
-```
-
----
-
-## 🚀 Cara Menjalankan
+## Cara Menjalankan
 
 ```bash
 # Install dependencies
