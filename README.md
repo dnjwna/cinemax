@@ -6,14 +6,14 @@ Aplikasi movie discovery yang dibangun dengan React, dilengkapi fitur user authe
 
 ## 📦 Libraries yang Digunakan
 
-| Library | Versi | Kegunaan |
-|---|---|---|
-| `react` | ^19.2.5 | Core framework UI |
-| `react-dom` | ^19.2.5 | DOM rendering untuk React |
-| `react-router-dom` | ^7.6.0 | Client-side routing & protected routes |
-| `react-icons` | ^5.6.0 | Icon set untuk sidebar & UI elements |
-| `axios` | ^1.15.1 | HTTP client (tersedia untuk fetch data film) |
-| `vite` | ^8.0.9 | Build tool & dev server |
+| Library | Kegunaan |
+|---|---|
+| `react` | Core framework UI |
+| `react-dom` | DOM rendering untuk React |
+| `react-router-dom` | Client-side routing & protected routes |
+| `react-icons` | Icon set untuk sidebar & UI elements |
+| `axios` | HTTP client (tersedia untuk fetch data film) |
+| `vite` | Build tool & dev server |
 
 ---
 
