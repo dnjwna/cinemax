@@ -80,10 +80,6 @@ function LoginPage() {
             Register
           </Link>
         </p>
-
-        <p style={styles.hint}>
-          Belum punya akun? Register dulu ya!
-        </p>
       </div>
     </div>
   )
