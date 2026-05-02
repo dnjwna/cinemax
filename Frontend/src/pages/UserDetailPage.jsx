@@ -1,38 +1,26 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 import Sidebar from '../components/Sidebar'
-
-const BASE_URL = 'https://reqres.in/api'
+import api from '../api'
 
 function UserDetailPage() {
   const { id } = useParams()
-  const { token } = useAuth()
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch(`${BASE_URL}/users/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'x-api-key': 'reqres-free-v1',
-      },
-    })
+    api.get(`/users/${id}`)
       .then((res) => {
-        if (!res.ok) throw new Error('User not found')
-        return res.json()
-      })
-      .then((data) => {
-        setUser(data.data)
+        setUser(res.data)
         setLoading(false)
       })
       .catch(() => {
         setError('User not found or failed to load.')
         setLoading(false)
       })
-  }, [id, token])
+  }, [id])
 
   return (
     <div style={styles.layout}>
@@ -47,22 +35,20 @@ function UserDetailPage() {
 
         {user && (
           <div style={styles.profileCard}>
-            <div style={styles.avatarWrap}>
-              <img src={user.avatar} alt={user.first_name} style={styles.avatar} />
+            <div style={styles.avatarPlaceholder}>
+              {user.name?.charAt(0).toUpperCase()}
             </div>
             <div style={styles.info}>
               <div style={styles.idBadge}>Member ID #{user.id}</div>
-              <h2 style={styles.name}>
-                {user.first_name} {user.last_name}
-              </h2>
+              <h2 style={styles.name}>{user.name}</h2>
               <p style={styles.email}>{user.email}</p>
 
               <div style={styles.divider} />
 
               <div style={styles.statsRow}>
-                <StatBox label="First Name" value={user.first_name} />
-                <StatBox label="Last Name" value={user.last_name} />
+                <StatBox label="Name" value={user.name} />
                 <StatBox label="User ID" value={`#${user.id}`} />
+                <StatBox label="Email" value={user.email} />
               </div>
             </div>
           </div>
@@ -90,20 +76,12 @@ const statStyles = {
     minWidth: '120px',
   },
   label: { fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' },
-  value: { fontSize: '16px', fontWeight: '600', color: '#fff' },
+  value: { fontSize: '15px', fontWeight: '600', color: '#fff', wordBreak: 'break-all' },
 }
 
 const styles = {
-  layout: {
-    display: 'flex',
-    minHeight: '100vh',
-    backgroundColor: '#141414',
-  },
-  main: {
-    flex: 1,
-    padding: '32px',
-    overflowY: 'auto',
-  },
+  layout: { display: 'flex', minHeight: '100vh', backgroundColor: '#141414' },
+  main: { flex: 1, padding: '32px', overflowY: 'auto' },
   back: {
     backgroundColor: 'transparent',
     color: '#888',
@@ -132,14 +110,18 @@ const styles = {
     alignItems: 'flex-start',
     flexWrap: 'wrap',
   },
-  avatarWrap: {
-    flexShrink: 0,
-  },
-  avatar: {
+  avatarPlaceholder: {
     width: '120px',
     height: '120px',
     borderRadius: '50%',
-    objectFit: 'cover',
+    backgroundColor: '#E50914',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '48px',
+    fontWeight: '700',
+    color: '#fff',
+    flexShrink: 0,
     border: '3px solid #E50914',
   },
   info: { flex: 1, minWidth: '200px' },

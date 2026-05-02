@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
+import api from '../api'
 
 function UsersPage() {
   const navigate = useNavigate()
@@ -14,13 +15,10 @@ function UsersPage() {
     setLoading(true)
     setError('')
 
-    fetch(`https://reqres.in/api/users?page=${page}`, {
-      headers: { 'x-api-key': 'reqres-free-v1' },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data.data || [])
-        setTotalPages(data.total_pages || 1)
+    api.get(`/users?page=${page}`)
+      .then((res) => {
+        setUsers(res.data.data || [])
+        setTotalPages(res.data.total_pages || 1)
         setLoading(false)
       })
       .catch(() => {
@@ -105,9 +103,11 @@ function UserCard({ user, onClick }) {
         borderColor: hovered ? '#E50914' : '#2a2a2a',
       }}
     >
-      <img src={user.avatar} alt={user.first_name} style={styles.avatar} />
+      <div style={styles.avatarPlaceholder}>
+        {user.name?.charAt(0).toUpperCase()}
+      </div>
       <div style={styles.info}>
-        <div style={styles.name}>{user.first_name} {user.last_name}</div>
+        <div style={styles.name}>{user.name}</div>
         <div style={styles.email}>{user.email}</div>
         <div style={styles.badge}>ID #{user.id}</div>
       </div>
@@ -144,7 +144,19 @@ const styles = {
     cursor: 'pointer',
     transition: 'all 0.2s ease',
   },
-  avatar: { width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 },
+  avatarPlaceholder: {
+    width: '56px',
+    height: '56px',
+    borderRadius: '50%',
+    backgroundColor: '#E50914',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '22px',
+    fontWeight: '700',
+    color: '#fff',
+    flexShrink: 0,
+  },
   info: { flex: 1, minWidth: 0 },
   name: { fontSize: '15px', fontWeight: '600', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
   email: { fontSize: '12px', color: '#888', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },

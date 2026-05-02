@@ -1,42 +1,35 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import api from "../api";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-
+  const { login } = useAuth();
+ 
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-
+ 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+ 
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
   };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+ 
     setLoading(true);
     setError("");
-
+ 
     try {
-      const response = await api.post("/login", {
-        email: form.email,
-        password: form.password,
-      });
-
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-
-      navigate("/dashboard");
+      await login(form.email, form.password);
+      navigate("/");
     } catch (err) {
       if (err.response?.status === 401) {
         setError("Email atau password salah.");
@@ -160,4 +153,3 @@ const styles = {
   hint: { textAlign: 'center', color: '#555', fontSize: '12px', marginTop: '12px' },
 }
 
-export default LoginPage
