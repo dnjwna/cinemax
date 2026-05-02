@@ -1,36 +1,53 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import api from "../api";
 
-function LoginPage() {
-  const { login } = useAuth()
-  const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [error, setError] = useState('')
+export default function LoginPage() {
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-    setError('')
-  }
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setError('')
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const users = JSON.parse(localStorage.getItem('cinemax_users') || '[]')
+    setLoading(true);
+    setError("");
 
-    const found = users.find(
-      (u) => u.email === form.email && u.password === form.password
-    )
+    try {
+      const response = await api.post("/login", {
+        email: form.email,
+        password: form.password,
+      });
 
-    if (!found) {
-      setError('Invalid email or password.')
-      return
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      navigate("/dashboard");
+    } catch (err) {
+      if (err.response?.status === 401) {
+        setError("Email atau password salah.");
+      } else {
+        setError("Terjadi kesalahan server.");
+      }
+    } finally {
+      setLoading(false);
     }
+  };
 
-    login({ email: found.email })
-    navigate('/')
-  }
 
   return (
     <div style={styles.page}>
