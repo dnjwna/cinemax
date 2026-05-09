@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import api from '../api'
 
 const API_KEY = '8f602c8e357d4d2eaca91654a37ca633'
 
@@ -57,6 +58,26 @@ function MovieDetailModal({ movieId, onClose, watchlist = [], onWatchlistChange 
       year: 'numeric', month: 'long', day: 'numeric',
     })
   }
+  const toggleWatchlist = async () => {
+  if (!movie) return
+  try {
+    if (isInWatchlist) {
+      await api.delete(`/watchlist/${movie.id}`)
+    } else {
+      await api.post('/watchlist', {
+        movie_id: movie.id,
+        title: movie.title,
+        genre: movie.genres?.slice(0, 2).map(g => g.name).join(', '),
+        rating: movie.vote_average?.toFixed(1),
+        year: movie.release_date?.slice(0, 4),
+        image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+      })
+    }
+    onWatchlistChange?.()
+  } catch (err) {
+    console.error(err)
+  }
+}
 
   return (
     <div className="cinemax-backdrop" style={styles.backdrop} onClick={handleBackdropClick}>
@@ -173,7 +194,7 @@ function MovieDetailModal({ movieId, onClose, watchlist = [], onWatchlistChange 
                   color: isInWatchlist ? '#4ade80' : '#fff',
                   border: isInWatchlist ? '1px solid #4ade80' : 'none',
                 }}
-                onClick={onWatchlistChange}
+                onClick={toggleWatchlist}
               >
                 {isInWatchlist ? '✓ In My List' : '+ My List'}
               </button>
