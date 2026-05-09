@@ -79,8 +79,8 @@ function RegisterPage() {
             <label style={styles.label}>Confirm Password</label>
             <input
               type="password"
-              name="confirmPassword"
-              value={form.confirmPassword}
+              name="password_confirmation"
+              value={form.password_confirmation}
               onChange={handleChange}
               placeholder="••••••••"
               style={styles.input}
