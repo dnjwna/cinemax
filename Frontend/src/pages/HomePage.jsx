@@ -20,7 +20,14 @@ function HomePage() {
   const [movies, setMovies] = useState([])
   const [watchlist, setWatchlist] = useState([])
   const [loading, setLoading] = useState(true)
-  const [selectedMovieId, setSelectedMovieId] = useState(null)  // ← state modal
+  const [selectedMovieId, setSelectedMovieId] = useState(null)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth <= 768)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
 
   const fetchWatchlist = async () => {
     try {
@@ -52,24 +59,32 @@ function HomePage() {
   }, [])
 
   return (
-    <div style={styles.layout}>
-      <Sidebar />
-      <main style={styles.main}>
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#1a1a1a' }}>
+      {!isMobile && <Sidebar />}
+      {isMobile && <Sidebar />}
+
+      <main style={{
+        flex: 1,
+        overflowY: 'auto',
+        backgroundColor: '#1a1a1a',
+        paddingBottom: isMobile ? '64px' : '0',
+      }}>
         <Hero watchlist={watchlist} onWatchlistChange={fetchWatchlist} />
         {loading ? (
-          <div style={styles.loading}>Loading movies...</div>
+          <div style={{ color: '#fff', textAlign: 'center', marginTop: '100px', fontSize: '18px' }}>
+            Loading movies...
+          </div>
         ) : (
           <MovieList
             movies={movies}
             label="Popular Movies"
             watchlist={watchlist}
             onWatchlistChange={fetchWatchlist}
-            onMovieClick={setSelectedMovieId}  // ← pass ke MovieList
+            onMovieClick={setSelectedMovieId}
           />
         )}
       </main>
 
-      {/* Modal — render di luar main biar z-index clean */}
       {selectedMovieId && (
         <MovieDetailModal
           movieId={selectedMovieId}
@@ -80,25 +95,6 @@ function HomePage() {
       )}
     </div>
   )
-}
-
-const styles = {
-  layout: {
-    display: 'flex',
-    minHeight: '100vh',
-    backgroundColor: '#1a1a1a',
-  },
-  main: {
-    flex: 1,
-    overflowY: 'auto',
-    backgroundColor: '#1a1a1a',
-  },
-  loading: {
-    color: '#fff',
-    textAlign: 'center',
-    marginTop: '100px',
-    fontSize: '18px',
-  },
 }
 
 export default HomePage
