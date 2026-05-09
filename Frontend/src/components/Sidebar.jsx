@@ -18,7 +18,6 @@ function Sidebar() {
     { icon: <MdOutlineExplore size={20} />, label: 'Browse', path: '/' },
     { icon: <MdOutlinePeople size={20} />, label: 'Members', path: '/users' },
     { icon: <MdOutlineBookmark size={20} />, label: 'Watchlist', path: '/watchlist' },
-    { icon: <MdOutlineCalendarMonth size={20} />, label: 'Coming Soon', path: '/coming-soon' },
   ]
 
   const handleLogout = () => {
