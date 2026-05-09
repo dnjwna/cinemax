@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
 import Hero from '../components/Hero'
 import MovieList from '../components/MovieList'
+import api from '../api'
 
 const API_KEY = '8f602c8e357d4d2eaca91654a37ca633'
 
@@ -16,7 +17,17 @@ const GENRE_MAP = {
 
 function HomePage() {
   const [movies, setMovies] = useState([])
+  const [watchlist, setWatchlist] = useState([])
   const [loading, setLoading] = useState(true)
+
+  const fetchWatchlist = async () => {
+    try {
+      const res = await api.get('/watchlist')
+      setWatchlist(res.data)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   useEffect(() => {
     fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=1`)
@@ -34,17 +45,24 @@ function HomePage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
+
+    fetchWatchlist()
   }, [])
 
   return (
     <div style={styles.layout}>
       <Sidebar />
       <main style={styles.main}>
-        <Hero />
+        <Hero watchlist={watchlist} onWatchlistChange={fetchWatchlist} />
         {loading ? (
           <div style={styles.loading}>Loading movies...</div>
         ) : (
-          <MovieList movies={movies} label="Popular Movies" />
+          <MovieList
+            movies={movies}
+            label="Popular Movies"
+            watchlist={watchlist}
+            onWatchlistChange={fetchWatchlist}
+          />
         )}
       </main>
     </div>

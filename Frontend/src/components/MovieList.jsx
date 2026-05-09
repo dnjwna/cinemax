@@ -3,9 +3,8 @@ import MovieCard from './MovieCard'
 
 const DEFAULT_VISIBLE = 8
 
-function MovieList({ movies, label }) {
+function MovieList({ movies, label, watchlist = [], onWatchlistChange }) {
   const [expanded, setExpanded] = useState(false)
-
   const visibleMovies = expanded ? movies : movies.slice(0, DEFAULT_VISIBLE)
 
   return (
@@ -16,10 +15,7 @@ function MovieList({ movies, label }) {
           <span style={styles.label}>{label}</span>
           <span style={styles.count}>{movies.length} movies</span>
         </div>
-        <button
-          style={styles.seeAllBtn}
-          onClick={() => setExpanded(!expanded)}
-        >
+        <button style={styles.seeAllBtn} onClick={() => setExpanded(!expanded)}>
           {expanded ? '← Show Less' : `See All ${movies.length} →`}
         </button>
       </div>
@@ -28,11 +24,9 @@ function MovieList({ movies, label }) {
         {visibleMovies.map((movie) => (
           <MovieCard
             key={movie.id}
-            title={movie.title}
-            genre={movie.genre}
-            rating={movie.rating}
-            year={movie.year}
-            image={movie.image}
+            {...movie}
+            watchlist={watchlist}
+            onWatchlistChange={onWatchlistChange}
           />
         ))}
       </div>
@@ -49,43 +43,22 @@ function MovieList({ movies, label }) {
 }
 
 const styles = {
-  section: {
-    padding: '24px 20px 32px',
-  },
+  section: { padding: '24px 20px 32px' },
   header: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: '16px',
   },
-  titleWrap: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-  },
-  accentBar: {
-    width: '4px',
-    height: '20px',
-    backgroundColor: '#E50914',
-    borderRadius: '2px',
-  },
-  label: {
-    fontSize: '17px',
-    fontWeight: '700',
-    color: '#fff',
-    letterSpacing: '-0.3px',
-  },
-  count: {
-    fontSize: '12px',
-    color: '#555',
-    fontWeight: '400',
-  },
+  titleWrap: { display: 'flex', alignItems: 'center', gap: '10px' },
+  accentBar: { width: '4px', height: '20px', backgroundColor: '#E50914', borderRadius: '2px' },
+  label: { fontSize: '17px', fontWeight: '700', color: '#fff', letterSpacing: '-0.3px' },
+  count: { fontSize: '12px', color: '#555', fontWeight: '400' },
   seeAllBtn: {
     fontSize: '12px',
     color: '#E50914',
     cursor: 'pointer',
     fontWeight: '600',
-    letterSpacing: '0.3px',
     background: 'none',
     border: '1px solid rgba(229,9,20,0.3)',
     borderRadius: '6px',
@@ -103,11 +76,7 @@ const styles = {
     flexWrap: 'wrap',
     gap: '14px',
   },
-  fadeHint: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '20px',
-  },
+  fadeHint: { display: 'flex', justifyContent: 'center', marginTop: '20px' },
   expandBtn: {
     background: 'rgba(255,255,255,0.05)',
     border: '1px solid #2a2a2a',
@@ -116,7 +85,6 @@ const styles = {
     padding: '10px 24px',
     borderRadius: '8px',
     cursor: 'pointer',
-    fontWeight: '500',
   },
 }
 

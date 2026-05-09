@@ -1,33 +1,72 @@
 import { useState } from 'react'
+import api from '../api'
 
-function MovieCard({ title, genre, rating, image }) {
+function MovieCard({ title, genre, rating, image, id, year, watchlist = [], onWatchlistChange }) {
   const [hovered, setHovered] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const isInWatchlist = watchlist.some(w => w.movie_id === id)
+
+  const toggleWatchlist = async (e) => {
+    e.stopPropagation()
+    setLoading(true)
+    try {
+      if (isInWatchlist) {
+        await api.delete(`/watchlist/${id}`)
+      } else {
+        await api.post('/watchlist', { movie_id: id, title, genre, rating, year, image })
+      }
+      onWatchlistChange?.()
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div
       style={{
         ...styles.card,
-        transform: hovered ? 'scale(1.06) translateY(-4px)' : 'scale(1)',
         boxShadow: hovered ? '0 20px 40px rgba(0,0,0,0.6)' : '0 4px 12px rgba(0,0,0,0.3)',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Image */}
-      <div style={styles.imageWrap}>
+      <div style={{
+        ...styles.imageWrap,
+        transform: hovered ? 'scale(1.06)' : 'scale(1)',
+        transition: 'transform 0.25s ease',
+        overflow: 'hidden',
+      }}>
         <img src={image} alt={title} style={styles.image} />
+
         {/* Hover overlay */}
-        <div style={{
-          ...styles.overlay,
-          opacity: hovered ? 1 : 0,
-        }}>
+        <div style={{ ...styles.overlay, opacity: hovered ? 1 : 0 }}>
           <button style={styles.playBtn}>▶</button>
         </div>
+
         {/* Rating badge */}
         <div style={styles.ratingBadge}>⭐ {rating}</div>
+
+        {/* Bookmark button */}
+        <button
+        style={{
+        ...styles.bookmarkBtn,
+        opacity: hovered || isInWatchlist ? 1 : 0,
+        backgroundColor: isInWatchlist ? '#E50914' : 'rgba(0,0,0,0.75)',
+        color: '#fff',
+        fontWeight: '800',
+        fontSize: '15px',
+      }}
+          onClick={toggleWatchlist}
+          disabled={loading}
+          title={isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
+        >
+          {isInWatchlist ? '✓' : '+'}
+        </button>
       </div>
 
-      {/* Info */}
       <div style={styles.info}>
         <div style={styles.title}>{title}</div>
         <div style={styles.genre}>{genre}</div>
@@ -76,9 +115,6 @@ const styles = {
     color: '#fff',
     fontSize: '16px',
     cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingLeft: '3px',
   },
   ratingBadge: {
@@ -91,6 +127,19 @@ const styles = {
     fontWeight: '700',
     padding: '3px 7px',
     borderRadius: '6px',
+    backdropFilter: 'blur(4px)',
+  },
+  bookmarkBtn: {
+    position: 'absolute',
+    top: '8px',
+    left: '8px',
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    border: 'none',
+    borderRadius: '6px',
+    padding: '4px 7px',
+    fontSize: '13px',
+    cursor: 'pointer',
+    transition: 'opacity 0.2s, background-color 0.2s',
     backdropFilter: 'blur(4px)',
   },
   info: {
