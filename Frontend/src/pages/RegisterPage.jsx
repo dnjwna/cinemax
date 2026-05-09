@@ -25,7 +25,7 @@ function RegisterPage() {
 
     try {
       await api.post('/register', {
-        name: form.name,
+        name: form.name || form.email.split('@')[0],
         email: form.email,
         password: form.password,
         password_confirmation: form.password_confirmation,
