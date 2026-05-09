@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import api from '../api'
 
-function MovieCard({ title, genre, rating, image, id, year, watchlist = [], onWatchlistChange }) {
+function MovieCard({ title, genre, rating, image, id, year, watchlist = [], onWatchlistChange, onMovieClick }) {
   const [hovered, setHovered] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -32,6 +32,7 @@ function MovieCard({ title, genre, rating, image, id, year, watchlist = [], onWa
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() => onMovieClick?.(id)}  // ← buka modal
     >
       <div style={{
         ...styles.imageWrap,
@@ -51,14 +52,14 @@ function MovieCard({ title, genre, rating, image, id, year, watchlist = [], onWa
 
         {/* Bookmark button */}
         <button
-        style={{
-        ...styles.bookmarkBtn,
-        opacity: hovered || isInWatchlist ? 1 : 0,
-        backgroundColor: isInWatchlist ? '#E50914' : 'rgba(0,0,0,0.75)',
-        color: '#fff',
-        fontWeight: '800',
-        fontSize: '15px',
-      }}
+          style={{
+            ...styles.bookmarkBtn,
+            opacity: hovered || isInWatchlist ? 1 : 0,
+            backgroundColor: isInWatchlist ? '#E50914' : 'rgba(0,0,0,0.75)',
+            color: '#fff',
+            fontWeight: '800',
+            fontSize: '15px',
+          }}
           onClick={toggleWatchlist}
           disabled={loading}
           title={isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}

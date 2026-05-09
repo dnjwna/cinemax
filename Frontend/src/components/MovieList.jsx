@@ -3,7 +3,7 @@ import MovieCard from './MovieCard'
 
 const DEFAULT_VISIBLE = 8
 
-function MovieList({ movies, label, watchlist = [], onWatchlistChange }) {
+function MovieList({ movies, label, watchlist = [], onWatchlistChange, onMovieClick }) {
   const [expanded, setExpanded] = useState(false)
   const visibleMovies = expanded ? movies : movies.slice(0, DEFAULT_VISIBLE)
 
@@ -27,6 +27,7 @@ function MovieList({ movies, label, watchlist = [], onWatchlistChange }) {
             {...movie}
             watchlist={watchlist}
             onWatchlistChange={onWatchlistChange}
+            onMovieClick={onMovieClick}
           />
         ))}
       </div>

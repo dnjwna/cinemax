@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
 import Hero from '../components/Hero'
 import MovieList from '../components/MovieList'
+import MovieDetailModal from '../components/MovieDetailModal'
 import api from '../api'
 
 const API_KEY = '8f602c8e357d4d2eaca91654a37ca633'
@@ -19,6 +20,7 @@ function HomePage() {
   const [movies, setMovies] = useState([])
   const [watchlist, setWatchlist] = useState([])
   const [loading, setLoading] = useState(true)
+  const [selectedMovieId, setSelectedMovieId] = useState(null)  // ← state modal
 
   const fetchWatchlist = async () => {
     try {
@@ -62,9 +64,20 @@ function HomePage() {
             label="Popular Movies"
             watchlist={watchlist}
             onWatchlistChange={fetchWatchlist}
+            onMovieClick={setSelectedMovieId}  // ← pass ke MovieList
           />
         )}
       </main>
+
+      {/* Modal — render di luar main biar z-index clean */}
+      {selectedMovieId && (
+        <MovieDetailModal
+          movieId={selectedMovieId}
+          onClose={() => setSelectedMovieId(null)}
+          watchlist={watchlist}
+          onWatchlistChange={fetchWatchlist}
+        />
+      )}
     </div>
   )
 }
