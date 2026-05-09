@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import api from '../api'
 
 function RegisterPage() {
   const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '', confirmPassword: '' })
+  const [form, setForm] = useState({ name: '', email: '', password: '', password_confirmation: '' })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -12,34 +13,32 @@ function RegisterPage() {
     setError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setSuccess('')
 
-    if (form.password !== form.confirmPassword) {
+    if (form.password !== form.password_confirmation) {
       setError('Passwords do not match.')
       return
     }
 
-    if (form.password.length < 6) {
-      setError('Password must be at least 6 characters.')
-      return
+    try {
+      await api.post('/register', {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        password_confirmation: form.password_confirmation,
+      })
+      setSuccess('Account created! Redirecting to login...')
+      setTimeout(() => navigate('/login'), 1500)
+    } catch (err) {
+      if (err.response?.data?.message) {
+        setError(err.response.data.message)
+      } else {
+        setError('Registration failed. Please try again.')
+      }
     }
-
-    const users = JSON.parse(localStorage.getItem('cinemax_users') || '[]')
-
-    const exists = users.find((u) => u.email === form.email)
-    if (exists) {
-      setError('Email already registered. Please login.')
-      return
-    }
-
-    users.push({ email: form.email, password: form.password })
-    localStorage.setItem('cinemax_users', JSON.stringify(users))
-
-    setSuccess('Account created successfully! Redirecting to login...')
-    setTimeout(() => navigate('/login'), 1500)
   }
 
   return (
